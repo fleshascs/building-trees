@@ -6,26 +6,29 @@ import { Branches } from '../components/Branches';
 import { data, Node, Branch } from '../data';
 import { cloneData } from '../utils';
 
-function recursiveTree(branch: Node[]) {
-  const tree: Branch[] = [];
-  function makeTree(_branch: Branch[], level: number, tree: Node[]) {
-    _branch.forEach((br) => {
-      if (br.parentId === level) {
-        br.children = [];
-        makeTree(_branch, br.id, br.children);
-        tree.push(br);
-      }
-    });
-  }
-  makeTree(branch, 0, tree);
-  return tree;
+function iterativeTree(branches: Node[]) {
+  const _branches = cloneData(branches);
+  const refMap = _branches.reduce((mp, branch: Branch) => {
+    mp[branch.id] = branch;
+    return mp;
+  }, {} as Record<number, Branch>);
+
+  _branches.forEach((branch) => {
+    const ref = refMap[branch.parentId];
+    if (ref) {
+      ref.children = ref.children ?? [];
+      ref.children.push(branch);
+    }
+  });
+
+  return _branches.filter((branch) => branch.parentId === 0);
 }
 
 let uniqueNum = 9999;
 
 const Home: NextPage = () => {
   const rawBranches = data;
-  const [branches, setBranches] = useState(recursiveTree(rawBranches));
+  const [branches, setBranches] = useState(iterativeTree(rawBranches));
   console.log(JSON.stringify(branches, undefined, 4));
 
   function onAdd(parentId: number) {
@@ -36,20 +39,20 @@ const Home: NextPage = () => {
       label: 'new item'
     };
     rawBranches.push(newBranch);
-    setBranches(recursiveTree(rawBranches));
+    setBranches(iterativeTree(rawBranches));
   }
-
   return (
     <div className={styles.container}>
       <div className={styles.nav}>
-        <b>Recursive</b>
-        <Link href='/iterative'>
-          <a>Iterative</a>
+        <Link href='/'>
+          <a>Recursive</a>
         </Link>
+        <b>Iterative</b>
         <Link href='/iterative2'>
           <a>Iterative2</a>
         </Link>
       </div>
+
       <main className={styles.main}>
         <Branches branches={branches} onAdd={onAdd} />
       </main>
