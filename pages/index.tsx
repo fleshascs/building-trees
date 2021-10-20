@@ -1,19 +1,18 @@
 import { useState } from 'react';
 import type { NextPage } from 'next';
-import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { Branches } from '../components/Branches';
 import { data, Node, Branch } from '../data';
-import { cloneData } from '../utils';
+import { Nav } from '../components/Nav';
 
 function recursiveTree(branch: Node[]) {
   const tree: Branch[] = [];
   function makeTree(_branch: Branch[], level: number, tree: Node[]) {
     _branch.forEach((br) => {
       if (br.parentId === level) {
-        br.children = [];
-        makeTree(_branch, br.id, br.children);
-        tree.push(br);
+        const newBr = { ...br, children: [] };
+        makeTree(_branch, newBr.id, newBr.children);
+        tree.push(newBr);
       }
     });
   }
@@ -41,15 +40,7 @@ const Home: NextPage = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.nav}>
-        <b>Recursive</b>
-        <Link href='/iterative'>
-          <a>Iterative</a>
-        </Link>
-        <Link href='/iterative2'>
-          <a>Iterative2</a>
-        </Link>
-      </div>
+      <Nav activeIndex={0} />
       <main className={styles.main}>
         <Branches branches={branches} onAdd={onAdd} />
       </main>

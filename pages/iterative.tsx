@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import type { NextPage } from 'next';
-import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { Branches } from '../components/Branches';
 import { data, Node, Branch } from '../data';
 import { cloneData } from '../utils';
+import { Nav } from '../components/Nav';
 
 function iterativeTree(branches: Node[]) {
   const _branches = cloneData(branches);
@@ -43,15 +43,7 @@ const Home: NextPage = () => {
   }
   return (
     <div className={styles.container}>
-      <div className={styles.nav}>
-        <Link href='/'>
-          <a>Recursive</a>
-        </Link>
-        <b>Iterative</b>
-        <Link href='/iterative2'>
-          <a>Iterative2</a>
-        </Link>
-      </div>
+      <Nav activeIndex={1} />
 
       <main className={styles.main}>
         <Branches branches={branches} onAdd={onAdd} />
