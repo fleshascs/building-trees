@@ -21,10 +21,9 @@ const Home: NextPage = () => {
   }
 
   const branches = useMemo(() => {
-    const _branches = cloneData(rawBranches);
     const childrenMap: Record<number, ReactNode[]> = { 0: [] };
 
-    _branches.forEach((branch) => {
+    rawBranches.forEach((branch) => {
       childrenMap[branch.id] = childrenMap[branch.id] ?? [];
       childrenMap[branch.parentId].push(
         <Fragment key={branch.id}>
