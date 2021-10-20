@@ -25,6 +25,8 @@ const Home: NextPage = () => {
 
     rawBranches.forEach((branch) => {
       childrenMap[branch.id] = childrenMap[branch.id] ?? [];
+      childrenMap[branch.parentId] = childrenMap[branch.parentId] ?? [];
+
       childrenMap[branch.parentId].push(
         <Fragment key={branch.id}>
           <li>
