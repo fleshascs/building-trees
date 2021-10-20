@@ -22,8 +22,7 @@ const Home: NextPage = () => {
 
   const branches = useMemo(() => {
     function renderBranches(branches: Node[]) {
-      const _branches = cloneData(branches);
-      const childrenMap = _branches.reduce(
+      const childrenMap = branches.reduce(
         (mp, branch) => {
           mp[branch.id] = [];
           return mp;
@@ -31,7 +30,7 @@ const Home: NextPage = () => {
         { 0: [] } as Record<number, ReactNode[]>
       );
 
-      _branches.forEach((branch) => {
+      branches.forEach((branch) => {
         childrenMap[branch.parentId].push(
           <Fragment key={branch.id}>
             <li>
