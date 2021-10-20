@@ -1,7 +1,7 @@
 import { Fragment, ReactNode, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import styles from '../styles/Home.module.css';
-import { Branch, data, Node } from '../data';
+import { data, Node } from '../data';
 import { cloneData } from '../utils';
 import { Nav } from '../components/Nav';
 
@@ -22,29 +22,33 @@ const Home: NextPage = () => {
 
   const branches = useMemo(() => {
     function renderBranches(branches: Node[]) {
-      const _branches = cloneData(branches).sort((a, b) => (a.parentId < b.parentId ? 1 : -1));
-      const constructionSite: Record<Branch['id'], ReactNode[]> = {};
+      const childrenMap = branches.reduce(
+        (mp, branch) => {
+          mp[branch.id] = [];
+          return mp;
+        },
+        { 0: [] } as Record<number, ReactNode[]>
+      );
 
-      _branches.forEach((branch) => {
-        constructionSite[branch.parentId] = constructionSite[branch.parentId] ?? [];
-        constructionSite[branch.parentId].push(
+      branches.forEach((branch) => {
+        childrenMap[branch.parentId].push(
           <Fragment key={branch.id}>
             <li>
               {branch.label} <button onClick={() => onAdd(branch.id)}>+</button>
             </li>
-            {constructionSite[branch.id] ? <ul>{constructionSite[branch.id].reverse()}</ul> : null}
+            {<ul>{childrenMap[branch.id]}</ul>}
           </Fragment>
         );
       });
 
-      return constructionSite[0].reverse();
+      return childrenMap[0];
     }
     return renderBranches(rawBranches);
   }, [rawBranches]);
 
   return (
     <div className={styles.container}>
-      <Nav activeIndex={2} />
+      <Nav activeIndex={3} />
 
       <main className={styles.main}>
         <ul>{branches}</ul>
